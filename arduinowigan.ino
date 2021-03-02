@@ -11,7 +11,7 @@ int    HTTP_PORT   = 8000;
 String HTTP_METHOD = "GET";
 char   HOST_NAME[] = "192.168.58.124"; // change to your PC's IP address
 String PATH_NAME   = "/";
-String queryString = "?rfid=";
+String queryString = "?rfidout=";
 
 void setup() {
   Serial.begin(9600);

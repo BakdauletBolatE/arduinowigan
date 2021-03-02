@@ -19,7 +19,7 @@ from .views import index
 
 urlpatterns = [
     path('',index),
-    path('chat/', include('chat.urls')),
+
 
     path('admin/', admin.site.urls),
 ]
