@@ -1,0 +1,68 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% block content %}
+
+ <!-- START CONTENT -->
+ <section id="content">
+    <!--start container-->
+    <div class="container">
+      
+      <!--work collections start-->
+      <div id="work-collections">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <ul id="projects-collection" class="collection z-depth-1">
+              <li class="collection-item avatar">
+                <i class="material-icons cyan circle">access_time</i>
+                <h6 class="collection-header m-0">Все сессий</h6>
+                <p>{{date}}</p>
+              </li>
+              {% for session in sessions %}
+              {% if session.user %}
+              <li class="collection-item avatar  {% if session.inout == 'Кірді' %} gradient-45deg-green-teal {% else %}  gradient-45deg-amber-amber {%endif%} white-text ">
+                <div class="row">
+                  <div class="col s9">
+                    <img class="circle" src="{{session.user.photo.url}}" alt="">      
+                    <p class="collections-title ">{{session.user.name}}</p>
+                    <p class="collections-content">{{session.created_at}}</p>
+                  </div>
+                  <div class="col s3">
+                    {% if session.user.spesilization %}
+                    <span class="task-cat cyan accent-4">{{session.user.spesilization.name}}</span>
+                    {% endif %}
+                 
+                  </div>
+                </div>
+              </li>
+              {% else %}
+              <li class="collection-item avatar gradient-45deg-deep-orange-orange white-text ">
+                <div class="row">
+                  <div class="col s9">
+                    <img class="circle" src="{% static 'images/avatar/unknown.jpg' %}" alt="">      
+                    <p class="collections-title ">Неизвестный Человек</p>
+                    <p class="collections-content">{{session.created_at}}</p>
+                  </div>
+                  <div class="col s3">
+                    <span class="task-cat red accent-4">Гость</span>
+                  </div>
+                </div>
+              </li>
+              {% endif %}
+              {% endfor %}
+              
+             
+            </ul>
+          </div>
+         
+        </div>
+      </div>
+      <!--work collections end-->
+      
+      <!-- //////////////////////////////////////////////////////////////////////////// -->
+    </div>
+    <!--end container-->
+  </section>
+  <!-- END CONTENT -->
+
+
+{% endblock %}

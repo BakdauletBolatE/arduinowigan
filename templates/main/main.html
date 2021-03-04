@@ -1,0 +1,156 @@
+{% extends 'layouts/app.html' %}
+{% load static %}
+{% block content %}
+
+ <!-- START CONTENT -->
+ <section id="content">
+    <!--start container-->
+    <div class="container">
+      
+      <!--work collections start-->
+      <div id="work-collections">
+        <div class="row">
+          <div class="col s12 m12 l12">
+            <ul id="projects-collection" class="collection z-depth-1">
+              <li class="collection-item avatar">
+                <i class="material-icons cyan circle">access_time</i>
+                <h6 class="collection-header m-0">Все сессий</h6>
+                <p>{{date}}</p>
+              </li>
+              <div class="all">
+              {% for session in sessions %}
+              {% if session.user %}
+              <li data-id="{{session.id}}" class="collection-item avatar  {% if session.inout == 'Кірді' %} gradient-45deg-green-teal {% else %}  gradient-45deg-amber-amber {%endif%} white-text ">
+                <div class="row">
+                  <div class="col s9">
+                    <img class="circle" src="{{session.user.photo.url}}" alt="">      
+                    <p class="collections-title "><a class="white-text" href="{% url 'detailStaff' session.user.id  %}">{{session.user.name}} {{session.uid}}</a></p>
+                    <p class="collections-content">{% if session.inout == 'Кірді' %} Вход в {{session.created_at}} {% else %} Выход {{session.created_at}} {%endif%}</p>
+                  </div>
+                  <div class="col s3">
+                    {% if session.user.spesilization %}
+                    <span class="task-cat cyan accent-4">{{session.user.spesilization.name}}</span>
+                    {% endif %}
+                 
+                  </div>
+                </div>
+              </li>
+              {% else %}
+              <li  data-id="{{session.id}}" class="collection-item avatar gradient-45deg-deep-orange-orange white-text ">
+                <div class="row">
+                  <div class="col s9">
+                    <img class="circle" src="{% static 'images/avatar/unknown.jpg' %}" alt="">      
+                    <p class="collections-title ">Неизвестный Человек {{session.uid}}</p>
+                    <p class="collections-content">Попытался в {{session.created_at}}</p>
+                  </div>
+                  <div class="col s3">
+                    <span class="task-cat red accent-4">Гость</span>
+                  </div>
+                </div>
+              </li>
+              {% endif %}
+              {% endfor %}
+                              
+            </div>
+             
+            </ul>
+          </div>
+         
+        </div>
+      </div>
+      <!--work collections end-->
+      
+      <!-- //////////////////////////////////////////////////////////////////////////// -->
+    </div>
+    <!--end container-->
+  </section>
+  <!-- END CONTENT -->
+
+  <script>
+    const parent = document.querySelector('.all');
+      let Elems = parent.querySelectorAll('.collection-item[data-id]');
+      let last = Elems[0].dataset.id;
+    function getJson() {
+      
+      fetch('api/')
+      .then(data => data.json())
+      .then( (staff)=>{
+          let data = staff.data;
+          if (last == data[0]){
+            // console.log(last);
+          }
+          else{
+            let user = staff.user;
+          if ( last == data[0]){
+            // console.log(lastId);
+          }
+          else{
+            const lastElem = document.createElement('li');
+            if (data[3] == true){
+              if (data[4] == "Кірді"){
+                lastElem.setAttribute('class','collection-item avatar   gradient-45deg-green-teal  white-text ');
+                
+                lastElem.innerHTML = `
+                <div class="row">
+                  <div class="col s9">
+                    <img class="circle" src="media/${user[5]}" alt="">      
+                    <p class="collections-title "><a class="white-text" href="">${user[2]} ${user[3]} ${data[2]}</a></p>
+                    <p class="collections-content">Вход в ${data[5]}</p>
+                  </div>
+                  <div class="col s3">
+                    <span class="task-cat cyan accent-4">${user[4]}</span>
+                  </div>
+                </div>
+                `;
+                
+
+              }
+              else{
+                lastElem.setAttribute('class','collection-item avatar    gradient-45deg-amber-amber  white-text  ');
+                lastElem.innerHTML = `
+                <div class="row">
+                  <div class="col s9">
+                    <img class="circle" src="media/${user[5]}" alt="">      
+                    <p class="collections-title "><a class="white-text" href="">${user[2]} ${user[3]} ${data[2]}</a></p>
+                    <p class="collections-content">Выход в ${data[5]}</p>
+                  </div>
+                  <div class="col s3">
+                    <span class="task-cat cyan accent-4">${user[4]}</span>
+                  </div>
+                </div>
+                `;
+              }
+            }
+            else{
+              lastElem.setAttribute('class','collection-item avatar gradient-45deg-deep-orange-orange white-text  ');
+              lastElem.innerHTML = `
+                <div class="row">
+                  <div class="col s9">
+                    <img class="circle" src="/static/images/avatar/unknown.jpg" alt="">      
+                    <p class="collections-title "><a class="white-text" href="">Неизвестный Человек ${data[2]}</a></p>
+                    <p class="collections-content">Выход в ${data[5]}</p>
+                  </div>
+                  <div class="col s3">
+                    <span class="task-cat cyan accent-4">Гость</span>
+                  </div>
+                </div>
+                `;
+            }
+            parent.prepend(lastElem);
+            last = data[0];
+            // console.log(data);
+            // console.log(user)
+            // console.log(data[1]);
+            
+          }
+          
+          }
+          
+          
+      });
+
+    }
+    getJson();
+    setInterval(getJson, 1000);
+  </script>
+{% endblock %}
