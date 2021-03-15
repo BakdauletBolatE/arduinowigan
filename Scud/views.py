@@ -40,6 +40,20 @@ def detailStaff(request,id):
 
     return render(request,'main/detail.html',data)
 
+def calandarday(request,*args,**kwargs):
+    
+    before = request.GET.get('datetimebefore')
+    after = request.GET.get('datetimeafter')
+    
+    sessions = StaffSessions.objects.filter(created_at__range=[before, after])
+    # sessions = StaffSessions.objects.filter(created_at=request.POST.get('datetime'))
+    data = {
+        'sessions':sessions
+    }
+    if request.method == "GET":
+        
+        return render(request,'main/clandar.html',data)
+
 
 def index(request):
 
