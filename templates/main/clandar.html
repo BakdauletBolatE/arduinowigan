@@ -16,10 +16,10 @@
                 <i class="material-icons cyan circle">access_time</i>
                 <h6 class="collection-header m-0">Все сессий</h6>
                 <div>
-                  <form action="{% url 'calendarDay' %}" method="GET">
+                  <form action="{% url 'calendarDay' %}" method="POST">
                     {% csrf_token %}
-                    <input name="datetimebefore" id="datetimepicker" type="date">
-                    <input name="datetimeafter" id="datetimepicker" type="date">
+                    <input name="datetimebefore" id="datetimepicker" value="{{before}}" type="date">
+                    <input name="datetimeafter" id="datetimepicker" value="{{after}}" type="date">
                     
                     <button>ok</button>
                   </form>

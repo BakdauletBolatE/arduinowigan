@@ -1,4 +1,4 @@
-from testd.models import Staff,StaffSessions
+from testd.models import Staff,StaffSessions,Spesilization
 from django.http.response import HttpResponse,JsonResponse
 from django.shortcuts import render,get_object_or_404
 from django.core import serializers
@@ -9,8 +9,10 @@ day = date.strftime("%d")
 month = date.strftime("%B")
 
 
+
 def allStaff(request):
     sessions = StaffSessions.objects.exclude(user=None)
+    
     data = {
         "sessions":sessions,
         "date":date
@@ -42,15 +44,27 @@ def detailStaff(request,id):
 
 def calandarday(request,*args,**kwargs):
     
-    before = request.GET.get('datetimebefore')
-    after = request.GET.get('datetimeafter')
-    
-    sessions = StaffSessions.objects.filter(created_at__range=[before, after])
-    # sessions = StaffSessions.objects.filter(created_at=request.POST.get('datetime'))
-    data = {
-        'sessions':sessions
-    }
-    if request.method == "GET":
+
+    if request.method == 'GET':
+        return render(request,'main/clandar.html')
+   
+
+
+    if request.method == "POST":
+        before = request.POST.get('datetimebefore')
+        after = request.POST.get('datetimeafter')
+        
+        sessions = StaffSessions.objects.filter(created_at__range=[before, after])
+
+      
+
+        # sessions = StaffSessions.objects.filter(created_at=request.POST.get('datetime'))
+        data = {
+            'sessions':sessions,
+            'before':before,
+            'after':after,
+          
+        }
         
         return render(request,'main/clandar.html',data)
 
@@ -58,10 +72,11 @@ def calandarday(request,*args,**kwargs):
 def index(request):
 
     sessions = StaffSessions.objects.filter(created_at__day=day).order_by('-created_at')
-
+    last_session = StaffSessions.objects.last()
     data = {
         "sessions":sessions,
-        "date":date
+        "date":date,
+        'last_session':last_session
     }
 
     return render(request,'main/main.html',data)
@@ -70,13 +85,21 @@ def indexJson(request):
     session = StaffSessions.objects.last()
     if session.user == None:
         user = "None"
+        sessions = list(StaffSessions.objects.values_list().last())
+        return JsonResponse({'data':sessions,'user':user})
     else:
+        user1 = Staff.objects.get(id=session.user_id)
         user = list(Staff.objects.values_list().get(id=session.user_id))
+        if user1.spesilization:
+            specilization = user1.specilization.name
+        else:
+            specilization = "Вакант"
+        sessions = list(StaffSessions.objects.values_list().last())
+        return JsonResponse({'data':sessions,'user':user,'specilization':str(specilization)})
 
+    
 
-    sessions = list(StaffSessions.objects.values_list().last())
-
-    return JsonResponse({'data':sessions,'user':user})
+    
 
 
 
